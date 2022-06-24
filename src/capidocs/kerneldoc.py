@@ -19,8 +19,79 @@ def hawkmoth_conf():
         raise
 
 
-def hawkmoth_converter(data):
-    return data
+def hawkmoth_converter(comment):
+    """Custom kernel-doc conversion to reStructuredText"""
+
+    if re.search(
+                r"(?m)\Astruct [^-]+? - ",
+                comment,
+            ) is not None:
+        #
+        # Convert structs:
+        #
+
+        # Strip entity-name from synopsis.
+        comment = re.sub(
+            r"(?m)\Astruct ([^-]+?) - ",
+            "",
+            comment,
+        )
+        # Convert member descriptions.
+        comment = re.sub(
+            r"(?m)^@([a-zA-Z0-9_]+):",
+            "\n:member \\1:",
+            comment,
+        )
+
+    elif re.search(
+                r"(?m)\A[^-]+?() - ",
+                comment,
+            ) is not None:
+        #
+        # Convert functions:
+        #
+
+        # Strip entity-name from synopsis.
+        comment = re.sub(
+            r"(?m)\A([ \t]*)([^-]+?) - ",
+            "",
+            comment,
+        )
+        # Convert parameter descriptions.
+        comment = re.sub(
+            r"(?m)^([ \t]*)@([a-zA-Z0-9_]+|\.\.\.):",
+            "\n\\1:param \\2:",
+            comment,
+        )
+        # Convert return-value section.
+        comment = re.sub(
+            r"(?m)^([ \t]*)([Rr]eturns?):",
+            "\n\\1:return:",
+            comment,
+        )
+
+    elif re.search(
+                r"(?m)\ADOC:",
+                comment,
+            ) is not None:
+        #
+        # Convert section docs:
+        #
+
+        # Insert section header
+        comment = re.sub(
+            r"(?m)\ADOC: (.+)$",
+            "\\1\n" + "-"*120 + "\n",
+            comment,
+        )
+        # Insert section without header
+        comment = re.sub(
+            r"(?m)\ADOC:$",
+            "",
+            comment,
+        )
+
+    return comment
 
 
 def hawkmoth_include_args():
