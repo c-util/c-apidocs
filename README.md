@@ -15,6 +15,7 @@ as well as project documentation.
 
 The requirements for this project are:
 
+ * `hawkmoth >= 0.7`
  * `python >= 3.8`
 
 ### Repository:
