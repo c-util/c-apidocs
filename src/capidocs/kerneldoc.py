@@ -2,6 +2,7 @@
 # c-apidocs - API Documentation Utilities
 #
 
+import pathlib
 import re
 import sys
 
@@ -24,3 +25,9 @@ def hawkmoth_converter(data):
 
 def hawkmoth_include_args():
     return hawkmoth.util.compiler.get_include_args()
+
+def hawkmoth_glob_includes(path, glob):
+    entries = []
+    for entry in pathlib.Path(path).glob(glob):
+        entries += ["-I" + str(entry)]
+    return entries
